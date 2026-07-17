@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ariane Lesnyak · Taxonomy & Labeling Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    /* ===== RESET ===== */
+    * { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
+    html { scroll-padding-top:72px; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: #333;
+      background: #fff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    section { padding: 90px 9vw; }
+    a { text-decoration: none; }
+    p { font-size: 16px; line-height: 32px; color: #333; }
+    h1 { font-size: 64px; font-weight: 200; line-height: 1.08; letter-spacing: -1.5px; }
+    h2 { font-size: 36px; font-weight: 700; line-height: 48px; letter-spacing: -0.5px; margin-bottom: 20px; }
+    h2 .highlight { color: #990000; }
+    h3 { font-size: 26px; font-weight: 300; margin-bottom: 16px; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .row-reverse { direction: rtl; }
+    .row-reverse > * { direction: ltr; }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 12px 9vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 999;
+      transition: 0.35s;
+      background: transparent;
+      height: 68px;
+    }
+    nav.scrolled {
+      background: #ffffff;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+    }
+    .logo {
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.3px;
+      transition: 0.3s;
+      line-height: 20px;
+      height: 20px;
+      text-transform: uppercase;
+      margin-right: auto;
+    }
+    nav.scrolled .logo { color: #990000; }
+    .menu {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      margin-left: 15px;
+    }
+    .menu a {
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 200;
+      line-height: 16px;
+      height: 16px;
+      letter-spacing: 0.3px;
+      text-transform: lowercase;
+      color: #fff;
+      transition: 0.3s;
+      padding: 0 2px;
+      position: relative;
+    }
+    .menu a::first-letter { text-transform: uppercase; }
+    nav.scrolled .menu a { color: #222; }
+    .menu a:hover { color: #fff; opacity: 1; }
+    nav.scrolled .menu a:hover { color: #990000; }
+    .menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background: #fff;
+      transition: width 0.3s;
+    }
+    nav.scrolled .menu a::after { background: #990000; }
+    .menu a:hover::after { width: 100%; }
+    .menu a.active::after { width: 100%; }
+
+    .nav-cta {
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 16px;
+      height: 40px;
+      padding: 0 32px;
+      background: #ffffff;
+      color: #990000 !important;
+      border: none;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      margin-left: auto;
+      text-transform: uppercase;
+    }
+    .nav-cta:hover {
+      background: #990000;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(153, 0, 0, 0.2);
+    }
+    nav.scrolled .nav-cta {
+      background: #990000;
+      color: #ffffff !important;
+    }
+    nav.scrolled .nav-cta:hover {
+      background: #ffffff;
+      color: #990000 !important;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .burger span { width: 26px; height: 2px; background: #fff; transition: 0.3s; }
+    nav.scrolled .burger span { background: #222; }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 9vw;
+      overflow: hidden;
+      background: #111;
+      color: #fff;
+    }
+    .hero-video-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .hero-video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.3;
+    }
+    .hero-video-bg .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(160, 30, 30, 0.55) 0%, rgba(10, 10, 10, 0.7) 100%);
+    }
+    .hero-wrap {
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+      padding-top: 80px;
+      padding-bottom: 120px;
+    }
+    .hero-content { max-width: 760px; }
+    .hero-content h1 {
+      font-weight: 200;
+      font-size: 56px;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .hero-content h1 .highlight { color: #ff8a8a; }
+    .hero-content p {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      max-width: 540px;
+      line-height: 1.8;
+    }
+    .hero-tags {
+      margin-top: 20px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 200;
+      line-height: 32px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.3px;
+    }
+    .hero-tags span { margin: 0 4px; }
+    .hero-buttons { margin-top: 32px; }
+    .btn-outline-white {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 38px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      transition: 0.35s;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      background: transparent;
+      color: #fff;
+    }
+    .btn-outline-white:hover {
+      background: #fff;
+      color: #111;
+      border-color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(255,255,255,0.15);
+    }
+
+    .hero-offer {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      padding: 32px 36px;
+      border-radius: 20px;
+    }
+    .hero-offer h4 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 18px; letter-spacing: 0.5px; }
+    .hero-offer ul { list-style: none; }
+    .hero-offer li {
+      display: flex; gap: 12px; margin: 14px 0;
+      color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.5;
+      align-items: flex-start;
+    }
+    .hero-offer li svg { flex: none; margin-top: 3px; color: #ff8a8a; width: 18px; height: 18px; }
+    .hero-offer li strong { color: #fff; font-weight: 700; }
+
+    .scroll-indicator {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%); z-index: 20;
+      animation: bounce 2.2s infinite;
+    }
+    .scroll-indicator span {
+      display: block; width: 24px; height: 38px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 30px; position: relative;
+    }
+    .scroll-indicator span::before {
+      content: ''; position: absolute; left: 50%; top: 8px;
+      transform: translateX(-50%); width: 4px; height: 10px;
+      background: #fff; border-radius: 4px;
+      animation: wheel 2s infinite;
+    }
+    @keyframes wheel {
+      0% { opacity: 1; transform: translate(-50%,0); }
+      100% { opacity: 0; transform: translate(-50%,12px); }
+    }
+    @keyframes bounce { 50% { transform: translate(-50%,8px); } }
+
+    .hero-curve {
+      position: absolute; bottom: -1px; left: 0; width: 100%; z-index: 4; line-height: 0;
+    }
+    .hero-curve svg { width: 100%; height: 100px; display: block; }
+
+    /* ===== SECTION TITLES ===== */
+    .section-title { max-width: 820px; margin-bottom: 60px; }
+    .section-title .kicker {
+      display: inline-block; padding: 6px 16px;
+      background: #f2f2f2; color: #990000;
+      border-radius: 999px; font-size: 11px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      font-weight: 700; margin-bottom: 18px;
+    }
+    .section-title p { font-size: 16px; line-height: 32px; color: #333; margin-top: 8px; }
+
+    /* ===== ABOUT ===== */
+    .about-text p { margin-bottom: 16px; font-size: 16px; line-height: 32px; color: #333; }
+    .about-img-placeholder {
+      background: #f0f0f0; border-radius: 20px; height: 380px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #888; border: 1px solid #e0e0e0;
+      overflow: hidden;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect fill="%23f5f5f5" width="400" height="300"/><path d="M50 150 L120 80 L200 150 L280 80 L350 150" stroke="%23ddd" stroke-width="2" fill="none"/><circle cx="120" cy="80" r="10" fill="%23990" opacity="0.3"/><circle cx="200" cy="150" r="10" fill="%23990" opacity="0.3"/><circle cx="280" cy="80" r="10" fill="%23990" opacity="0.3"/><circle cx="50" cy="150" r="6" fill="%23990" opacity="0.2"/><circle cx="350" cy="150" r="6" fill="%23990" opacity="0.2"/><path d="M120 80 L80 60 L60 80 L80 100 Z" stroke="%23990" stroke-width="1.5" fill="none"/><path d="M280 80 L320 60 L340 80 L320 100 Z" stroke="%23990" stroke-width="1.5" fill="none"/><text x="90" y="220" font-family="Nunito" font-size="14" fill="%23990" font-weight="300">Taxonomy · Metadata · Localization</text></svg>');
+      background-size: cover; background-position: center;
+    }
+
+    /* ===== EXPERTISE ===== */
+    .expertise-list { display: flex; flex-direction: column; gap: 16px; }
+    .expertise-list .exp-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 18px; border-radius: 12px;
+      background: #f9f9f9; border: 1px solid #eee;
+      transition: 0.3s;
+    }
+    .expertise-list .exp-item:hover { border-color: #990000; background: #fff; }
+    .expertise-list .exp-item svg { flex: none; margin-top: 3px; color: #990000; width: 20px; height: 20px; }
+    .expertise-list .exp-item strong { color: #111; font-weight: 700; }
+    .expertise-list .exp-item span { color: #444; font-size: 15px; }
+    .expertise-img-placeholder {
+      background: #f0f0f0; border-radius: 20px; height: 340px;
+      border: 1px solid #e0e0e0;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%"><rect fill="%23f5f5f5" width="400" height="300"/><circle cx="100" cy="100" r="40" fill="none" stroke="%23990" stroke-width="1.5" opacity="0.4"/><circle cx="200" cy="120" r="50" fill="none" stroke="%23990" stroke-width="1.5" opacity="0.3"/><circle cx="300" cy="90" r="35" fill="none" stroke="%23990" stroke-width="1.5" opacity="0.4"/><path d="M100 100 L200 120 L300 90" stroke="%23990" stroke-width="1.5" opacity="0.3"/><text x="90" y="220" font-family="Nunito" font-size="14" fill="%23990" font-weight="300">Labeling Operations · Classification</text></svg>');
+      background-size: cover; background-position: center;
+    }
+
+    /* ===== CASE STUDIES ===== */
+    .case-intro {
+      display: grid; grid-template-columns: 100px 1fr;
+      gap: 30px; align-items: center; margin-bottom: 60px;
+    }
+    .case-number { font-size: 72px; font-weight: 200; color: #990000; line-height: 1; }
+    .case-block {
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: 60px; align-items: center; margin-bottom: 100px;
+    }
+    .case-block.reverse { grid-template-columns: 1.1fr 1fr; }
+    .case-block.reverse .case-media { order: 2; }
+    .case-label {
+      display: inline-block; padding: 6px 16px;
+      background: #f4f4f4; border-radius: 999px;
+      font-size: 11px; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 18px;
+      font-weight: 700; color: #555;
+    }
+    .case-content h3 { font-size: 32px; font-weight: 300; margin-bottom: 18px; line-height: 1.2; }
+    .case-tags {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-top: 24px; justify-content: flex-start;
+    }
+    .case-tags span {
+      font-size: 11px; padding: 6px 14px;
+      border-radius: 999px; background: #f5f5f5;
+      border: 1px solid #ececec; color: #444;
+      font-weight: 700; letter-spacing: 0.3px;
+    }
+    .case-metrics {
+      margin-top: 28px; display: grid;
+      grid-template-columns: repeat(3,1fr); gap: 16px;
+    }
+    .case-metrics .metric {
+      display: block; font-size: 34px; font-weight: 200;
+      color: #990000; margin-bottom: 2px; line-height: 1;
+    }
+    .case-metrics .metric-sm { font-size: 24px; }
+    .case-metrics small { color: #666; font-size: 13px; line-height: 1.4; display: block; }
+    .case-metrics .small-text { font-size: 11px; }
+
+    .demo-window {
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.06);
+      overflow: hidden; border: 1px solid #ececec;
+    }
+    .window-title {
+      padding: 14px 22px; background: #fafafa;
+      font-weight: 700; border-bottom: 1px solid #ececec;
+      font-size: 13px; letter-spacing: 0.8px;
+      text-transform: uppercase; color: #555;
+      display: flex; justify-content: space-between;
+    }
+    .classification-ui {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; padding: 26px;
+    }
+    .selector-column { display: flex; flex-direction: column; gap: 12px; }
+    .selector { border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
+    .selector-header {
+      padding: 12px 16px; display: flex;
+      justify-content: space-between; font-weight: 700;
+      background: #fff; font-size: 13px; cursor: pointer;
+    }
+    .selector-options { padding: 8px; background: #fafafa; display: block; }
+    .option {
+      padding: 8px 12px; border-radius: 6px;
+      margin-bottom: 4px; font-size: 13px;
+      cursor: pointer; transition: 0.2s;
+    }
+    .option:hover { background: #f0f0f0; }
+    .option.selected { background: #990000; color: #fff; font-weight: 700; }
+    .selected-tags { background: #fafafa; border-radius: 14px; padding: 20px; }
+    .selected-tags h4 {
+      font-size: 12px; letter-spacing: 1px;
+      text-transform: uppercase; color: #888; margin-bottom: 14px;
+    }
+    .tag {
+      display: inline-flex; padding: 8px 14px;
+      background: #fff; border-radius: 999px;
+      margin: 0 6px 10px 0;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+      font-weight: 700; font-size: 12px;
+      opacity: 0; transform: translateX(-12px);
+      animation: tagAppear 0.5s forwards;
+    }
+    .tag:nth-child(2) { animation-delay: 0.4s; }
+    .tag:nth-child(3) { animation-delay: 0.8s; }
+    @keyframes tagAppear { to { opacity: 1; transform: translateX(0); } }
+
+    .locali-container { padding: 24px; }
+    .locali-box {
+      border-radius: 14px; padding: 18px 20px;
+      margin-bottom: 4px; opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .locali-box.before { background: #fff5f5; border: 1px solid #f6cccb; }
+    .locali-box.after { background: #f0f9f3; border: 1px solid #bfe8cc; }
+    .locali-box.reveal-in { opacity: 1; transform: translateY(0); }
+    .locali-label {
+      font-size: 10px; letter-spacing: 1.2px;
+      text-transform: uppercase; font-weight: 700;
+      margin-bottom: 10px; color: #888;
+    }
+    .locali-attr { font-size: 14px; color: #333; margin-bottom: 4px; }
+    .locali-arrow {
+      text-align: center; font-size: 20px; color: #990000;
+      margin: 2px 0; position: relative; height: 22px;
+    }
+    .locali-arrow-line {
+      width: 2px; height: 0; background: #990000;
+      margin: 0 auto; transition: height 0.4s ease;
+    }
+    .locali-arrow.reveal-in .locali-arrow-line { height: 14px; }
+    .locali-tags {
+      margin-top: 16px; display: flex; flex-wrap: wrap;
+      gap: 10px; opacity: 0; transition: opacity 0.4s ease;
+    }
+    .locali-tags.reveal-in { opacity: 1; }
+    .mqm-tag { padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .mqm-tag.pass { background: #dff6e7; color: #10733c; }
+
+    .taxonomy-anim-container {
+      position: relative; width: 100%; height: 320px;
+      padding: 20px; background: #fafafa;
+      border-radius: 16px; border: 1px solid #ececec;
+      overflow: hidden;
+    }
+    .taxonomy-anim-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .taxonomy-anim-line {
+      stroke: #990000; stroke-width: 1.5; stroke-opacity: 0.3;
+      stroke-dasharray: 800; stroke-dashoffset: 800;
+    }
+    .taxonomy-anim-line.animate { animation: taxonomyDraw 0.9s ease forwards; }
+    @keyframes taxonomyDraw { to { stroke-dashoffset: 0; } }
+    .taxonomy-anim-node {
+      position: absolute; transform: translateX(-50%);
+      font-size: 11px; font-weight: 700; padding: 6px 10px;
+      border-radius: 8px; white-space: nowrap;
+      opacity: 0; animation: taxonomyPop 0.4s ease forwards;
+    }
+    @keyframes taxonomyPop {
+      from { opacity: 0; transform: translateX(-50%) scale(0.7); }
+      to { opacity: 1; transform: translateX(-50%) scale(1); }
+    }
+    .taxonomy-anim-node.root { background: #990000; color: #fff; font-size: 13px; }
+    .taxonomy-anim-node.cat { background: #f4f4f4; color: #555; border: 1px solid #e0e0e0; }
+    .taxonomy-anim-node.leaf { background: #222; color: #fff; }
+    .taxonomy-anim-demo {
+      position: absolute; bottom: 12px; left: 50%;
+      transform: translateX(-50%); font-size: 11px;
+      color: #777; background: #fff; border: 1px solid #ececec;
+      border-radius: 999px; padding: 6px 16px;
+      white-space: nowrap; opacity: 0;
+      animation: fadeUp 0.5s ease 1.8s forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .labelops-container { padding: 24px; }
+    .labelops-row {
+      display: grid; grid-template-columns: 0.9fr 1.3fr 1.2fr 0.8fr;
+      gap: 10px; align-items: center; padding: 10px 14px;
+      border-radius: 10px; font-size: 12px; margin-bottom: 6px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .labelops-row:nth-child(odd) { background: #fafafa; }
+    .labelops-row.reveal-in { opacity: 1; transform: translateY(0); }
+    .lop-cell { color: #555; font-family: monospace; font-size: 12px; }
+    .lop-status {
+      justify-self: end; font-size: 10px; font-weight: 700;
+      padding: 4px 12px; border-radius: 999px;
+    }
+    .lop-status.ok { background: #dff6e7; color: #10733c; }
+    .lop-status.flag { background: #fff1cf; color: #b47d00; }
+    .labelops-stats {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px solid #ececec;
+      opacity: 0; animation: fadeIn 0.5s ease 1.8s forwards;
+    }
+    .labelops-stats span { font-size: 12px; font-weight: 700; color: #990000; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ===== CLIENTS ===== */
+    .client-scroll-container {
+      overflow: hidden; position: relative;
+      margin: 30px 0 10px; padding: 16px 0;
+    }
+    .client-logos {
+      display: flex; animation: scroll-left 28s linear infinite;
+      white-space: nowrap; align-items: center; gap: 0;
+    }
+    .client-logos img {
+      max-height: 48px; width: auto; max-width: 140px;
+      margin: 0 32px; object-fit: contain; flex-shrink: 0;
+      opacity: 0.9; transition: all 0.4s ease; filter: none !important;
+    }
+    .client-logos img:hover { opacity: 1; transform: scale(1.04); }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ===== WHY (ícones vermelhos com filter) ===== */
+    .why-grid {
+      display: grid; grid-template-columns: repeat(2,1fr);
+      gap: 30px; margin-top: 50px;
+    }
+    .why-card {
+      padding: 32px; border-radius: 18px;
+      border: 1px solid #ececec;
+      transition: 0.35s;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+      display: flex; gap: 16px; align-items: flex-start;
+      text-align: left;
+    }
+    .why-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.06);
+      border-color: #990000;
+    }
+    .why-card .icon {
+      flex: none; font-size: 20px; margin-top: 2px;
+      color: #990000;
+      filter: none;
+    }
+    .why-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .why-card p { font-size: 15px; color: #555; line-height: 1.6; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #fff;
+      padding: 60px 9vw 40px;
+      border-top: 1px solid #ececec;
+    }
+    .footer-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+      border: 1px solid #ececec;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+      overflow: hidden;
+      position: relative;
+    }
+    .footer-left {
+      background: #990000;
+      padding: 44px 48px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 24px 0 0 24px;
+    }
+    .footer-left h3 {
+      font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px;
+    }
+    .footer-left p {
+      color: rgba(255,255,255,0.85);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+    .footer-left .small {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 12px;
+    }
+    .footer-right {
+      background: #fff;
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      border-radius: 0 24px 24px 0;
+      margin-left: -5px;
+      box-shadow: -4px 0 30px rgba(0,0,0,0.03);
+      position: relative;
+      z-index: 2;
+    }
+    .footer-right .cta-text {
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .footer-right .cta-text:hover { color: #990000; }
+    .footer-social {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+      width: 100%;
+      align-items: center;
+    }
+    .footer-social a {
+      color: #990000;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-social a:hover { color: #cc0000; }
+    .footer-social a .icon {
+      display: inline-block;
+      width: 18px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .footer-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid #ececec;
+      align-items: start;
+      margin-bottom:50px;
+    }
+    .footer-bottom-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .footer-bottom-left .name {
+      font-size: 28px;
+      font-weight: 800;
+      color: #990000;
+      line-height: 1.1;
+    }
+    .footer-bottom-left .tagline {
+      font-size: 13px;
+      color: #888;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      margin-top: 4px;
+    }
+    .footer-bottom-left .copy {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 8px;
+    }
+    .footer-bottom-left .copy strong {
+      color: #990000;
+      font-weight: 700;
+    }
+    .footer-bottom-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: flex-start;
+      gap: 2px;
+    }
+    .footer-bottom-right .name-small {
+      font-size: 18px;
+      font-weight: 700;
+      color: #990000;
+      text-align: right;
+    }
+    .footer-bottom-right .location-small {
+      font-size: 14px;
+      color: #888;
+      text-align: right;
+    }
+    .footer-bottom-right .email-small {
+      font-size: 14px;
+      color: #990000;
+      font-weight: 400;
+      text-align: right;
+    }
+
+    /* ===== BACK TO TOP ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(200,200,200,0.5);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(200,200,200,0.3);
+      color: #666;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      line-height: 1;
+    }
+    .back-to-top:hover {
+      background: rgba(153,0,0,0.8);
+      color: #fff;
+      transform: translateY(-4px);
+      border-color: #990000;
+    }
+
+    /* ===== REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(28px); transition: 0.8s cubic-bezier(0.2,0.7,0.2,1); }
+    .reveal.on { opacity: 1; transform: none; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:1024px) {
+      .hero-wrap { grid-template-columns: 1fr; gap: 40px; padding-top: 100px; }
+      .row { grid-template-columns: 1fr; gap: 40px; }
+      .row-reverse { direction: ltr; }
+      .case-block, .case-block.reverse { grid-template-columns: 1fr; gap: 40px; }
+      .case-block.reverse .case-media { order: 0; }
+      .case-intro { grid-template-columns: 1fr; gap: 12px; }
+      .case-number { font-size: 48px; }
+      .why-grid { grid-template-columns: 1fr; }
+      .menu { display: none; position: absolute; top: 100%; left: 0; right: 0;
+              background: #ffffff; flex-direction: column; padding: 24px 9vw;
+              gap: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); }
+      .menu.open { display: flex; }
+      .menu a { color: #222 !important; }
+      .burger { display: flex; }
+      .classification-ui { grid-template-columns: 1fr; }
+      .labelops-row { grid-template-columns: 1fr; gap: 4px; }
+      .case-metrics { grid-template-columns: 1fr 1fr; }
+      .hero-content h1 { font-size: 40px; }
+      .hero-curve svg { height: 60px; }
+      section { padding: 70px 6vw; }
+      .footer-card { grid-template-columns: 1fr; border-radius: 24px; }
+      .footer-left { border-radius: 24px 24px 0 0; }
+      .footer-right { border-radius: 0 0 24px 24px; margin-left: 0; }
+      .footer-bottom { grid-template-columns: 1fr; gap: 20px; }
+      .footer-bottom-right { align-items: flex-start; }
+    }
+    @media (max-width:600px) {
+      .hero-content h1 { font-size: 32px; }
+      .hero-offer { padding: 24px; }
+      .hero-offer li { font-size: 13px; }
+      .case-metrics { grid-template-columns: 1fr; }
+      .taxonomy-anim-container { height: 260px; }
+      .taxonomy-anim-node { font-size: 9px; padding: 4px 8px; }
+      .footer-left { padding: 28px 24px; }
+      .footer-right { padding: 28px 24px; }
+      .hero-tags { font-size: 13px; line-height: 26px; }
+      .footer-bottom-left .name { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="nav">
+  <div class="logo">Ariane Lesnyak</div>
+  <div class="menu" id="menu">
+    <a href="#hero" class="active">Home</a>
+    <a href="#about">About Me</a>
+    <a href="#expertise">Expertise</a>
+    <a href="#cases">Case Studies</a>
+    <a href="#clients">Clients</a>
+    <a href="#why">Why Me</a>
+  </div>
+  <a href="#contact" class="nav-cta">CONTACT ME</a>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="#" type="video/mp4" />
+    </video>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="hero-wrap">
+    <div class="hero-content">
+      <h1 style="margin-top:20px;">Structured metadata <br>for scalable
+<br /><span class="highlight">taxonomy systems</span></h1>
+      <p>Bilingual taxonomy, localization and labeling operations specialist. I refine classification outputs, standardize titles, map occupations and apply labeling guidelines across large volumes of job- and resume-related data.</p>
+      <div class="hero-tags">
+        <span>Taxonomy</span> <span>•</span>
+        <span>Labeling Operations</span> <span>•</span>
+        <span>Attribute Attachment</span> <span>•</span>
+       <br> <span>Title Standardization</span> <span>•</span>
+        <span>Occupation Mapping</span> <span>•</span>
+        <span>Content Standards</span> <span>•</span>
+        <br><span>Data Validation</span> <span>•</span>
+        <span>Localization Support</span>
+      </div>
+      <div class="hero-buttons">
+        <a href="#cases" class="btn-outline-white">Discover Case Studies</a>
+      </div>
+    </div>
+
+    <div class="hero-offer">
+      <h4>What I Bring</h4>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Taxonomy &amp; Labeling</strong> — attribute attachment, title standardization, occupation mapping</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Content Standards</strong> — apply and refine labeling guidelines at scale</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Data Cleanup &amp; Validation</strong> — refinement of classification outputs across high-volume records</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Localization Support</strong> — adapting metadata attributes for different markets and languages</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Pattern Recognition</strong> — sound judgment on ambiguous cases with structured escalation</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="scroll-indicator"><span></span></div>
+  <div class="hero-curve">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,100 L0,40 Q720,-20 1440,40 L1440,100 Z" fill="#fff"/></svg>
+  </div>
+</section>
+
+<!-- ===== ABOUT (texto à esquerda) ===== -->
+<section id="about">
+  <div class="section-title reveal">
+    <h2>From Information Science <br> to <span class="highlight">Labeling Operations</span></h2>
+    <p>I help AI and enterprise platforms turn messy, high-volume records <br> into reliable, structured taxonomies. My work combines controlled <br> vocabularies, metadata validation, title normalization and labeling <br> guidelines to keep classification outputs consistent.</p>
+  </div>
+  <div class="row">
+    <div class="about-text reveal">
+      <p>Across enterprise knowledge, localization and AI annotation projects, I've spent years reviewing records at scale — applying labeling guidelines, spotting inconsistencies, cleaning up attributes, and escalating ambiguous cases so classification systems stay accurate as they grow.</p>
+      <p>For a Taxonomy Analyst role in Labeling Operations, that translates directly into <strong>title standardization</strong>, <strong>occupation mapping</strong>, <strong>attribute attachment</strong>, and <strong>refinement of classification outputs</strong> for job- and resume-related data.</p>
+      <p>My focus sits at the intersection of <strong>Taxonomy, Metadata, Content Standards</strong> and <strong>Localization</strong>.</p>
+    </div>
+    <div class="about-img-placeholder reveal"></div>
+  </div>
+</section>
+
+<!-- ===== EXPERTISE (invertido: img à esq, texto à dir) ===== -->
+<section id="expertise">
+  <div class="section-title reveal">
+    <h2>What I Bring to <span class="highlight">Labeling Operations</span></h2>
+    <p>Analytical, precision-oriented work applied to high-volume, structured data.</p>
+  </div>
+  <div class="row row-reverse">
+    <div class="expertise-img-placeholder reveal"></div>
+    <div class="expertise-list reveal">
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Taxonomy Quality</strong> — Refinement of classification outputs, hierarchical consistency and semantic accuracy across large record sets.</span></div>
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Labeling Guidelines</strong> — Applying and stress-testing guidelines; flagging ambiguity for structured escalation and guideline updates.</span></div>
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Title Standardization</strong> — Normalizing job titles and resume attributes into controlled forms that support downstream matching.</span></div>
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Occupation Mapping</strong> — Mapping raw titles and skills to standardized occupation taxonomies with disciplined pattern recognition.</span></div>
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Data Cleanup &amp; Validation</strong> — Reviewing, correcting and validating metadata to keep classification accurate across large volumes.</span></div>
+      <div class="exp-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Content Standards</strong> — Contributing to content standards that keep labeling consistent, auditable and scalable.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CASE STUDIES ===== -->
+<section id="cases">
+  <div class="section-title reveal">
+    <h2>Selected <span class="highlight">Case Studies</span></h2>
+    <p>Representative work in taxonomy operations, labeling guidelines, metadata validation and refinement of classification outputs.</p>
+  </div>
+
+  <!-- CASE 01 -->
+  <div class="case-intro reveal">
+    <div class="case-number">01</div>
+    <div><h2>Enterprise Content Taxonomy &amp; Attribute Attachment</h2><p>Applying controlled vocabularies to classify enterprise knowledge content, attaching structured metadata attributes ensuring accurate retrieval.</p></div>
+  </div>
+  <div class="case-block reveal">
+    <div class="case-content">
+      <div class="case-label">Case Study 01</div>
+      <h3>Multi-Taxonomy Metadata Classification</h3>
+      <p>In the final stage of an enterprise publishing workflow, every article had to be interpreted and classified. My responsibility was to apply standardized metadata across <strong>three independent taxonomies</strong> using controlled vocabularies, ensuring documents became discoverable. Incorrect classification could route content to wrong collections.</p>
+      <div class="case-metrics">
+        <div><span class="metric">3</span><small>Independent taxonomies applied</small></div>
+        <div><span class="metric">20+</span><small>Subject categories governed</small></div>
+        <div><span class="metric">100%</span><small>Manual semantic interpretation</small></div>
+      </div>
+      <div class="case-tags">
+        <span>Attribute Attachment</span>
+        <span>Controlled Vocabulary</span>
+        <p><span>Content Standards</span>
+        <span>Metadata Validation</span></p>
+      </div>
+    </div>
+    <div class="case-media">
+      <div class="demo-window">
+        <div class="window-title"><span>Metadata Classification</span></div>
+        <div class="classification-ui">
+          <div class="selector-column">
+            <div class="selector expanded">
+              <div class="selector-header">Subject <span>▸</span></div>
+              <div class="selector-options">
+                <div class="option selected">✓ Financial Services</div>
+                <div class="option">Customer Support</div>
+                <div class="option">Sales</div>
+                <div class="option">Products &amp; Services</div>
+              </div>
+            </div>
+            <div class="selector"><div class="selector-header">Product <span>▸</span></div></div>
+            <div class="selector"><div class="selector-header">Customer Profile <span>▸</span></div></div>
+          </div>
+          <div class="selected-tags">
+            <h4>Assigned Metadata</h4>
+            <div class="tag">Financial Services</div>
+            <div class="tag">Mobile</div>
+            <div class="tag">SMB</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASE 02 -->
+  <div class="case-intro reveal">
+    <div class="case-number">02</div>
+    <div><h2>Localization Support for Metadata Properties</h2><p>Adapted metadata attributes for different markets, languages and regional conventions across enterprise software localization projects.</p></div>
+  </div>
+  <div class="case-block reverse reveal">
+    <div class="case-content">
+      <div class="case-label">Case Study 02</div>
+      <h3>Metadata Localization &amp; QA</h3>
+      <p>Adapted metadata attributes for different markets, languages and regional conventions. Responsibilities included identifying terminology inconsistencies, adjusting locale-specific attribute formats and values, and validating results against client glossaries, style guides and content standards.</p>
+      <div class="case-tags">
+        <span>Localization Support</span>
+        <span>Metadata Properties</span>
+        <p><span>Terminology Validation</span>
+        <span>Content Standards</span></p>
+      </div>
+    </div>
+    <div class="case-media">
+      <div class="demo-window">
+        <div class="window-title">Metadata Localization</div>
+        <div class="locali-container" id="locali-animation">
+          <div class="locali-box before"><div class="locali-label">Raw Attribute (EN-US)</div><div class="locali-attr">Level: <strong>Manager</strong></div><div class="locali-attr">Employment: <strong>Full-time</strong></div><div class="locali-attr">Location: <strong>City, ST</strong></div></div>
+          <div class="locali-arrow"><div class="locali-arrow-line"></div><span>▾</span></div>
+          <div class="locali-box after"><div class="locali-label">Localized (PT-BR)</div><div class="locali-attr">Nível: <strong>Gerente</strong></div><div class="locali-attr">Contrato: <strong>Efetivo (CLT)</strong></div><div class="locali-attr">Local: <strong>Cidade, Estado</strong></div></div>
+          <div class="locali-tags"><span class="mqm-tag pass">Regional convention ✓</span><span class="mqm-tag pass">Attribute validated ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASE 03 -->
+  <div class="case-intro reveal">
+    <div class="case-number">03</div>
+    <div><h2>Occupation Mapping &amp; Title Standardization</h2><p>Reviewed raw job titles and mapped them to standardized occupations within a hierarchical taxonomy, reducing ambiguity.</p></div>
+  </div>
+  <div class="case-block reveal">
+    <div class="case-content">
+      <div class="case-label">Case Study 03</div>
+      <h3>Occupation Taxonomy &amp; Title Standardization</h3>
+      <p>Analyzed a high-volume corpus of job- and resume-related records to build a hierarchical vocabulary — mapping free-text titles to normalized occupations. Defined equivalence relations, hierarchical relations and associative links.</p>
+      <div class="case-metrics">
+        <div><span class="metric metric-sm">2,700+</span><small class="small-text">Terms mapped</small></div>
+        <div><span class="metric metric-sm">67%</span><small class="small-text">Fewer zero-result searches</small></div>
+        <div><span class="metric metric-sm">ISO 25964</span><small class="small-text">Thesaurus standard applied</small></div>
+      </div>
+      <div class="case-tags">
+        <span>Occupation Mapping</span>
+        <span>Title Standardization</span>
+        <p><span>Taxonomy Design</span>
+        <span>Controlled Vocabulary</span></p>
+      </div>
+    </div>
+    <div class="case-media">
+      <div class="taxonomy-anim-container" id="occ-taxonomy-animation">
+        <svg class="taxonomy-anim-svg">
+          <line class="taxonomy-anim-line" x1="50%" y1="10%" x2="18%" y2="42%" />
+          <line class="taxonomy-anim-line" x1="50%" y1="10%" x2="50%" y2="42%" />
+          <line class="taxonomy-anim-line" x1="50%" y1="10%" x2="82%" y2="42%" />
+          <line class="taxonomy-anim-line" x1="18%" y1="42%" x2="18%" y2="74%" />
+          <line class="taxonomy-anim-line" x1="50%" y1="42%" x2="50%" y2="74%" />
+          <line class="taxonomy-anim-line" x1="82%" y1="42%" x2="82%" y2="74%" />
+        </svg>
+        <div class="taxonomy-anim-node root" style="left:50%;top:6%;">Occupation Taxonomy</div>
+        <div class="taxonomy-anim-node cat" style="left:18%;top:38%;">Raw: "Software Developer"</div>
+        <div class="taxonomy-anim-node cat" style="left:50%;top:38%;">Raw: "Account Executive"</div>
+        <div class="taxonomy-anim-node cat" style="left:82%;top:38%;">Raw: "Store Manager"</div>
+        <div class="taxonomy-anim-node leaf" style="left:18%;top:70%;">Software Engineer</div>
+        <div class="taxonomy-anim-node leaf" style="left:50%;top:70%;">Sales Representative</div>
+        <div class="taxonomy-anim-node leaf" style="left:82%;top:70%;">Retail Manager</div>
+        <div class="taxonomy-anim-demo">Mapped 3 of 2,400+ occupations · 92% attribute match confidence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASE 04 -->
+  <div class="case-intro reveal">
+    <div class="case-number">04</div>
+    <div><h2>Labeling Operations &amp; Classification Validation</h2><p>Reviewed job- and resume-related records through structured labeling workflows, applying guidelines and content standards.</p></div>
+  </div>
+  <div class="case-block reverse reveal">
+    <div class="case-content">
+      <div class="case-label">Case Study 04</div>
+      <h3>Labeling Operations &amp; Escalation Workflow</h3>
+      <p>Performed labeling operations on job- and resume-related data: standardized titles, attached structured attributes, validated metadata and applied labeling guidelines record by record. Ambiguous cases were escalated with rationale, feeding back into guideline updates.</p>
+      <div class="case-metrics">
+        <div><span class="metric">30K+</span><small>Records processed</small></div>
+        <div><span class="metric">70%</span><small>Reduction in recurring errors</small></div>
+        <div><span class="metric">95%+</span><small>Quality score on audits</small></div>
+      </div>
+      <div class="case-tags">
+        <span>Attribute Attachment</span>
+        <span>Title Standardization</span>
+        <p><span>Occupation Mapping</span>
+        <span>Escalation</span>
+        <span>Pattern Recognition</span></p>
+      </div>
+    </div>
+    <div class="case-media">
+      <div class="demo-window">
+        <div class="window-title"><span>Labeling Queue</span><span style="color:#990000;font-size:11px">LIVE</span></div>
+        <div class="labelops-container" id="labelops-animation">
+          <div class="labelops-row"><div class="lop-cell">REC_00412</div><div class="lop-cell">"Sr. Data Eng."</div><div class="lop-cell">Seniority=Senior</div><div class="lop-status ok">✓ Verified</div></div>
+          <div class="labelops-row"><div class="lop-cell">REC_00413</div><div class="lop-cell">"Ops Lead — Remote"</div><div class="lop-cell">Location=Ambiguous</div><div class="lop-status flag">⚠ Escalate</div></div>
+          <div class="labelops-row"><div class="lop-cell">REC_00414</div><div class="lop-cell">"Gerente de Loja"</div><div class="lop-cell">Mapped: Retail Manager</div><div class="lop-status ok">✓ Verified</div></div>
+          <div class="labelops-row"><div class="lop-cell">REC_00415</div><div class="lop-cell">"Account Exec II"</div><div class="lop-cell">Level=Mismatch</div><div class="lop-status flag">⚠ Escalate</div></div>
+          <div class="labelops-stats"><span>✓ 12,400 records labeled</span><span>⚠ 3.1% flagged</span><span>⚡ 40% faster classification</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MY FEATURED CLIENTS ===== -->
+<section id="clients">
+  <div class="section-title reveal" style="text-align:center;max-width:100%;">
+    <h2>My Featured <span class="highlight">Clients</span></h2>
+    <p>Collaborations across localization, AI training and enterprise content operations.</p>
+  </div>
+  <div class="client-scroll-container">
+    <div class="client-logos">
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/acclaro_logo.png?raw=true" alt="Acclaro" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/itcglobal.png?raw=true" alt="ITC Global" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/iyuno%20logo.webp?raw=true" alt="Iyuno" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/Claro-logo-logotype.png?raw=true" alt="Claro" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/tabuleiro-filmes.png?raw=true" alt="Tabuleiro" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/saga_logo.webp?raw=true" alt="Saga" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/tikinetlogo3.png?raw=true" alt="Tikinet" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/moshimedialogo_fundo.png?raw=true" alt="Moshi Media" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/vsivoxmundi-logo.webp?raw=true" alt="VSI" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/logo_tw_cb1.png?raw=true" alt="TW" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/acclaro_logo.png?raw=true" alt="Acclaro" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/itcglobal.png?raw=true" alt="ITC Global" loading="lazy" />
+      <img src="https://github.com/alc-etimo/invisible/blob/main/imgs/iyuno%20logo.webp?raw=true" alt="Iyuno" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY I'M A STRONG MATCH ===== -->
+<section id="why">
+  <div class="section-title reveal" style="text-align:center;max-width:100%;">
+    <h2>Why I'm a <span class="highlight">Strong Match</span></h2>
+    <p>The intersection between structured data, taxonomy and labeling operations has become the focus of my career. My background combines annotation, enterprise taxonomy, metadata governance and localization support.</p>
+  </div>
+  <div class="why-grid" style="max-width:1000px;margin:50px auto 0;">
+    <div class="why-card reveal"><span class="icon">✦</span><div><h3>Precision at Scale</h3><p>Comfortable working on high-volume, precision-oriented labeling tasks with strong pattern recognition and sound judgment.</p></div></div>
+    <div class="why-card reveal"><span class="icon">»</span><div><h3 style="font-size:16px;">Follows Guidelines, Knows When to Escalate</h3><p>Able to follow detailed labeling instructions consistently, while appropriately flagging ambiguous cases for review.</p></div></div>
+    <div class="why-card reveal"><span class="icon">✓</span><div><h3>Quality First</h3><p>Used to reviewing work against labeling guidelines, content standards, terminology databases and project-specific quality checks.</p></div></div>
+    <div class="why-card reveal"><span class="icon">+</span><div><h3>Taxonomy &amp; AI Ready</h3><p>Experience supporting AI/model training datasets through taxonomy, attribute attachment, occupation mapping, annotation and metadata validation.</p></div></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-card">
+    <div class="footer-left">
+      <h3>Let's Build Better Language Data</h3>
+      <p>Interested in discussing taxonomy, metadata, localization or AI language projects?</p>
+      <p style="font-weight:300;font-size:15px;margin-top:4px;">Remote, contractor-friendly, comfortable near US time zones. Available for taxonomy analyst and labeling operations engagements.</p>
+    </div>
+    <div class="footer-right">
+      <a href="mailto:ariane.lesnyak@example.com" class="cta-text">CONTACT ME</a>
+      <div class="footer-social">
+        <a href="#"><span class="icon">in</span> LinkedIn</a>
+        <a href="#"><span class="icon"><i style="font-size:18px" class="fa">&#xf09b;</i></span> GitHub</a>
+        <a href="mailto:ariane.lesnyak@example.com"><span class="icon">✉</span> ariane.etimo@gmail.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-left">
+      <div class="name">ARIANE<br />LESNYAK</div>
+      <div class="tagline">Your trusted provider of top taxonomy, localization, QA &amp; labeling operations talent</div>
+      <div class="copy">© 2026 Ariane Lesnyak | Inspired by <strong>EQWI</strong></div>
+    </div>
+    <div class="footer-bottom-right">
+      <div class="name-small">Ariane Lesnyak</div>
+      <div class="location-small">São Paulo, Brazil</div>
+      <div class="email-small">ariane.etimo@gmail.com</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== BACK TO TOP ===== -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">▲</button>
+
+<script>
+  // ===== NAV =====
+  const nav = document.getElementById('nav');
+  const menuItems = document.querySelectorAll('.menu a');
+  
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+    
+    // Active section highlighting
+    let current = '';
+    const sections = document.querySelectorAll('section[id]');
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    menuItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('href') === '#' + current) {
+        item.classList.add('active');
+      }
+    });
+  });
+  
+  document.getElementById('burger').addEventListener('click', () => document.getElementById('menu').classList.toggle('open'));
+  document.querySelectorAll('#menu a').forEach(a => a.addEventListener('click', () => document.getElementById('menu').classList.remove('open')));
+
+  // ===== BACK TO TOP =====
+  const backBtn = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+  backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ===== REVEAL =====
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ===== SELECTOR TOGGLE =====
+  document.querySelectorAll('.selector-header').forEach(h => {
+    h.addEventListener('click', () => h.parentElement.classList.toggle('expanded'));
+  });
+
+  // ===== OPTION LOOP =====
+  const options = document.querySelectorAll('.option');
+  let current = 0;
+  setInterval(() => {
+    options.forEach(o => o.classList.remove('selected'));
+    options[current].classList.add('selected');
+    current = (current + 1) % options.length;
+  }, 2200);
+
+  // ===== CASE 02 — LOCALIZATION =====
+  const localiAnim = document.getElementById('locali-animation');
+  if (localiAnim) {
+    function runLocali() {
+      localiAnim.querySelectorAll('.locali-box, .locali-arrow, .locali-tags').forEach(el => el.classList.remove('reveal-in'));
+      setTimeout(() => { localiAnim.querySelector('.locali-box.before').classList.add('reveal-in'); }, 150);
+      setTimeout(() => { localiAnim.querySelector('.locali-arrow').classList.add('reveal-in'); }, 650);
+      setTimeout(() => { localiAnim.querySelector('.locali-box.after').classList.add('reveal-in'); }, 1050);
+      setTimeout(() => { localiAnim.querySelector('.locali-tags').classList.add('reveal-in'); }, 1550);
+    }
+    const localiObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { runLocali(); localiObserver.unobserve(entry.target); } });
+    }, { threshold: 0.2 });
+    localiObserver.observe(localiAnim);
+    setInterval(runLocali, 5000);
+  }
+
+  // ===== CASE 03 — OCCUPATION TREE =====
+  const occAnim = document.getElementById('occ-taxonomy-animation');
+  if (occAnim) {
+    function runOcc() {
+      const lines = occAnim.querySelectorAll('.taxonomy-anim-line');
+      const nodes = occAnim.querySelectorAll('.taxonomy-anim-node');
+      const demo = occAnim.querySelector('.taxonomy-anim-demo');
+      lines.forEach(l => l.classList.remove('animate'));
+      nodes.forEach(n => { n.style.animation = 'none'; n.offsetHeight; n.style.animation = ''; });
+      if (demo) { demo.style.animation = 'none'; demo.offsetHeight; demo.style.animation = ''; }
+      lines.forEach((line, i) => setTimeout(() => line.classList.add('animate'), 200 + i * 100));
+      nodes.forEach((node, i) => { node.style.animationDelay = (0.15 + i * 0.12) + 's'; });
+    }
+    const occObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { runOcc(); occObserver.unobserve(entry.target); } });
+    }, { threshold: 0.2 });
+    occObserver.observe(occAnim);
+    setInterval(runOcc, 6000);
+  }
+
+  // ===== CASE 04 — LABELOPS =====
+  const labelopsAnim = document.getElementById('labelops-animation');
+  if (labelopsAnim) {
+    function runLabelops() {
+      const rows = labelopsAnim.querySelectorAll('.labelops-row');
+      const stats = labelopsAnim.querySelector('.labelops-stats');
+      rows.forEach(r => r.classList.remove('reveal-in'));
+      if (stats) { stats.style.animation = 'none'; stats.offsetHeight; stats.style.animation = ''; }
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('reveal-in'), 250 + i * 350));
+    }
+    const labelopsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { runLabelops(); labelopsObserver.unobserve(entry.target); } });
+    }, { threshold: 0.2 });
+    labelopsObserver.observe(labelopsAnim);
+    setInterval(runLabelops, 6000);
+  }
+</script>
+</body>
+</html>
